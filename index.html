@@ -15,9 +15,9 @@
 
             constructor() {
                 this.list = [];
-                if (JSON.parse(localStorage.getItem('list'))) {
+                if (localStorage.getItem('list')) {
                     this.list = JSON.parse(localStorage.getItem('list'))
-                        .map(el => new Note(el.title, el.text));
+                                    .map(el => new Note(el.title, el.text));
                 }
             }
 
@@ -104,7 +104,7 @@
         toDo.remove("food", true);
 
         console.log(toDo.getInfo());
-        console.log(toDo);
+        console.log(toDo.list);
     </script>
 </body>
 
