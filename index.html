@@ -15,9 +15,9 @@
 
             constructor() {
                 this.list = [];
-                if (typeof JSON.parse(localStorage.getItem('list')) === "array") {
+                if (Array.isArray(JSON.parse(localStorage.getItem('list')))) {
                     this.list = JSON.parse(localStorage.getItem('list'))
-                                    .map(el => new Note(el.title, el.text));
+                        .map(el => new Note(el.title, el.text, el.status));
                 }
             }
 
@@ -43,7 +43,7 @@
                     toDo: 0
                 };
                 this.list.forEach(el => {
-                    if (el.status === List.DEFAULT_STATUS) {
+                    if (el.status === false) {
                         titleCounter.toDo += 1;
                     } else titleCounter.done += 1;
                 });
@@ -73,11 +73,13 @@
         }
 
         class Note {
-            status = false;
 
             constructor(title, text) {
-                this.title = title
+                this.title = title;
                 this.text = text;
+                if (!arguments[2]) {
+                    this.status = false; 
+                }else this.status = true;
             }
 
             edit(newText) {
@@ -100,12 +102,10 @@
         toDo.create(new Note('Remember', 'call boss at 5 pm '));
         toDo.create(new Note('Diner', 'order pizza'));
         toDo.changeStatus('Diner', true);
-        toDo.changeStatus('Diner', true);
         toDo.remove("food", true);
 
         console.log(toDo.getInfo());
         console.log(toDo.list);
-    </script>
+</script>
 </body>
-
 </html>
