@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        'use strict'
+        class List {
+
+            constructor() {
+                this.list = [];
+                if (JSON.parse(localStorage.getItem('list'))) {
+                    this.list = JSON.parse(localStorage.getItem('list'))
+                        .map(el => new Note(el.title, el.text));
+                }
+            }
+
+            create(note) {
+                const index = this.#searchNote(this.list, note.title);
+                if (index !== -1) return;
+                this.list.push(note);
+                localStorage.setItem('list', JSON.stringify(this.list));
+            }
+
+            remove(title, acces) {
+                const index = this.#searchNote(this.list, title);
+                if (index === -1) return;
+                if (!acces) return;
+                this.list.splice(index, 1);
+                localStorage.setItem('list', JSON.stringify(this.list));
+            }
+
+            getInfo() {
+                const titleCounter = {
+                    all: this.list.length,
+                    done: 0,
+                    toDo: 0
+                };
+                this.list.forEach(el => {
+                    if (el.status === List.DEFAULT_STATUS) {
+                        titleCounter.toDo += 1;
+                    } else titleCounter.done += 1;
+                });
+                return titleCounter;
+            }
+
+
+            changeText(title, text, acces, comment) {
+                const index = this.#searchNote(this.list, title);
+                if (index === -1) return;
+                if (!acces) return;
+                this.list[index].edit(text, comment)
+                localStorage.setItem('list', JSON.stringify(this.list));
+            }
+
+            changeStatus(title, acces) {
+                const index = this.#searchNote(this.list, title);
+                if (index === -1) return;
+                if (!acces) return;
+                this.list[index].changeNoteStatus(title);
+                localStorage.setItem('list', JSON.stringify(this.list));
+            }
+
+            #searchNote(arr, title) {
+                return arr.findIndex(el => el.title === title);
+            }
+        }
+
+        class Note {
+            status = false;
+
+            constructor(title, text) {
+                this.title = title
+                this.text = text;
+            }
+
+            edit(newText) {
+                this.text = newText;
+            }
+
+            changeNoteStatus(title) {
+                if (!this.status) {
+                    this.status = true;
+                } else { this.status = false }
+            }
+        }
+        // localStorage.clear()
+        const toDo = new List();
+
+        toDo.create(new Note('buy', 'milk'));
+        toDo.create(new Note('Food', 'need to nuy some food'));
+        toDo.create(new Note('food', 'Need to buy some food'));
+        toDo.create(new Note('Meeting', 'Meeting with Fred in the park'));
+        toDo.create(new Note('Remember', 'call boss at 5 pm '));
+        toDo.create(new Note('Diner', 'order pizza'));
+        toDo.changeStatus('Diner', true);
+        toDo.changeStatus('Diner', true);
+        toDo.remove("food", true);
+
+        console.log(toDo.getInfo());
+        console.log(toDo);
+    </script>
+</body>
+
+</html>
