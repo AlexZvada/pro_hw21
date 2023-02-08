@@ -15,7 +15,7 @@
 
             constructor() {
                 this.list = [];
-                if (localStorage.getItem('list')) {
+                if (typeof JSON.parse(localStorage.getItem('list')) === "array") {
                     this.list = JSON.parse(localStorage.getItem('list'))
                                     .map(el => new Note(el.title, el.text));
                 }
